@@ -7,6 +7,7 @@ import com.volga.testForJunior.domain.Transaction;
 import com.volga.testForJunior.domain.Wallet;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,8 +28,9 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional
     public Wallet updateBalance(UUID walletId, BigDecimal amount, OperationType operationType) {
-        Wallet wallet = walletRepository.findById(walletId)
+        Wallet wallet = walletRepository.findByIdForUpdate(walletId)
                 .orElseThrow(() -> new RuntimeException("Кошелька не существует, проверьте UUID"));
         if (operationType.equals(OperationType.DEPOSIT)) {
             wallet.setBalance(wallet.getBalance().add(amount));
